@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.math.BigDecimal;
 public class TspDP{
 	public static final int DOUBLE_SCALE = 7;
+	public static final int EARTH_RADIUS = 6371; // source Wikipedia
 	private double [][] dist;
 	private int N;
 	private double C[][];
@@ -18,8 +19,8 @@ public class TspDP{
 		try{
 			Scanner scan  = new Scanner(new File(path));
 			coordArrList = new ArrayList<double[]>();
-			Pattern xCoord = Pattern.compile("\\(\\s*(-*\\d*\\.\\d*),");
-			Pattern yCoord = Pattern.compile(",\\s*(-*\\d*\\.\\d*)\\)");
+			Pattern xCoord = Pattern.compile("\\(\\s*(-*\\d*\\.\\d*)\\s*,\\s*");
+			Pattern yCoord = Pattern.compile(",\\s*(-*\\d*\\.\\d*)\\s*\\)");
 
 			while(scan.hasNextLine()){
 				String line;
@@ -35,7 +36,7 @@ public class TspDP{
 				coord[0] = (new BigDecimal(mX.group(1))).doubleValue();
 			  coord[1] = (new BigDecimal(mY.group(1))).doubleValue();
 				coordArrList.add(coord);
-//System.out.println(coord[0] + ",  " + coord[1]);
+System.out.println(coord[0] + ",  " + coord[1]);
 			}
 
 		}catch (FileNotFoundException e){
@@ -48,18 +49,31 @@ public class TspDP{
 			for(int j = i+1; j <= nVert; j++){
 				double[] c1 = coordArrList.get(i-1);
 				double[] c2 = coordArrList.get(j-1);
-				double[] diff = {c2[0]-c1[0], c2[1] - c1[1]};
-				distMat[i][j] = distMat[j][i] =Math.sqrt(diff[0]*diff[0] + diff[1]*diff[1]); //(new BigDecimal(Math.sqrt(diff[0]*diff[0] + diff[1]*diff[1]))).setScale(DOUBLE_SCALE, BigDecimal.ROUND_HALF_UP).doubleValue();
+//				double[] diff = {c2[0]-c1[0], c2[1] - c1[1]};
+				distMat[i][j] = distMat[j][i] = haversineDist(c1,c2);
+					//Math.sqrt(diff[0]*diff[0] + diff[1]*diff[1]); //(new BigDecimal(Math.sqrt(diff[0]*diff[0] + diff[1]*diff[1]))).setScale(DOUBLE_SCALE, BigDecimal.ROUND_HALF_UP).doubleValue();
 			}
 		}
-/*
+
 for(int i = 0; i <= nVert; i++){
 	for(int j = 0; j <=nVert; j++)
 		System.out.print(distMat[i][j] + "    ");
 	System.out.println();
 }
-*/
+
 		return distMat;
+
+	}
+
+	public static double haversineDist(double[] c1, double[] c2 ){
+		double latDist = (c2[0] - c1[0]) * Math.PI/180;
+		double longDist = (c2[1] - c1[1]) * Math.PI/180;
+		double a = Math.sin(latDist/2.0) * Math.sin(latDist/2.0) + 
+							 Math.cos(c1[0] * Math.PI/180)*Math.cos(c2[0]*Math.PI/180)*
+							 Math.sin(longDist/2.0) * Math.sin(longDist/2.0);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		 return c * EARTH_RADIUS;
+
 
 	}
 
@@ -91,7 +105,7 @@ for(int i = 0; i <= nVert; i++){
 			}
 		}
 
-/*
+
 System.out.println("Printing C matrix");
 for(int k = 2; k <=N; k++){
 	System.out.println("k = " + k);
@@ -99,7 +113,7 @@ for(int k = 2; k <=N; k++){
 		System.out.print(C[k][j] + "     ");
 	System.out.println("\n\n");
 }
-*/
+
 
 
 	}
@@ -137,6 +151,10 @@ for(int k = 2; k <=N; k++){
 		return (((x^(x + (x&(-x))))/(x&(-x)))>>2)|(x + (x&(-x)));
 	}
 
+	public static void Usage(){
+		System.out.println("Usage: java TspDP <path to file>");
+	}
+
 	public static void main(String[] args){
 		/*
 		double[][] d = {{0.0,0.0,0.0,0.0,0.0},{0.0, 0.0, 20.0, 42.0, 35.0},
@@ -147,10 +165,13 @@ for(int k = 2; k <=N; k++){
 		TspDP tsp = new TspDP(d);
 		tsp.calcOptPath();
     */
-    double[][] d = readFile(args[0]);
-		if(d != null){
-			TspDP tsp = new TspDP(d);
-			tsp.printOptPath();
-		}
+		if(args.length == 1){
+    	double[][] d = readFile(args[0]);
+			if(d != null){
+				TspDP tsp = new TspDP(d);
+				tsp.printOptPath();
+			}
+		}else
+			TspDP.Usage();
 	}
 }

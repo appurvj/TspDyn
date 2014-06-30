@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.math.BigDecimal;
 public class TspDP{
 	public static final int DOUBLE_SCALE = 7;
+	public static final int EARTH_RADIUS = 6371; // source Wikipedia
 	private double [][] dist;
 	private int N;
 	private double C[][];
@@ -18,8 +19,8 @@ public class TspDP{
 		try{
 			Scanner scan  = new Scanner(new File(path));
 			coordArrList = new ArrayList<double[]>();
-			Pattern xCoord = Pattern.compile("\\(\\s*(-*\\d*\\.\\d*),");
-			Pattern yCoord = Pattern.compile(",\\s*(-*\\d*\\.\\d*)\\)");
+			Pattern xCoord = Pattern.compile("\\(\\s*(-*\\d*\\.\\d*)\\s*,\\s*");
+			Pattern yCoord = Pattern.compile(",\\s*(-*\\d*\\.\\d*)\\s*\\)");
 
 			while(scan.hasNextLine()){
 				String line;
@@ -48,8 +49,9 @@ public class TspDP{
 			for(int j = i+1; j <= nVert; j++){
 				double[] c1 = coordArrList.get(i-1);
 				double[] c2 = coordArrList.get(j-1);
-				double[] diff = {c2[0]-c1[0], c2[1] - c1[1]};
-				distMat[i][j] = distMat[j][i] =Math.sqrt(diff[0]*diff[0] + diff[1]*diff[1]); //(new BigDecimal(Math.sqrt(diff[0]*diff[0] + diff[1]*diff[1]))).setScale(DOUBLE_SCALE, BigDecimal.ROUND_HALF_UP).doubleValue();
+//				double[] diff = {c2[0]-c1[0], c2[1] - c1[1]};
+				distMat[i][j] = distMat[j][i] = haversineDist(c1,c2);
+					//Math.sqrt(diff[0]*diff[0] + diff[1]*diff[1]); //(new BigDecimal(Math.sqrt(diff[0]*diff[0] + diff[1]*diff[1]))).setScale(DOUBLE_SCALE, BigDecimal.ROUND_HALF_UP).doubleValue();
 			}
 		}
 /*
@@ -60,6 +62,18 @@ for(int i = 0; i <= nVert; i++){
 }
 */
 		return distMat;
+
+	}
+
+	public static double haversineDist(double[] c1, double[] c2 ){
+		double latDist = (c2[0] - c1[0]) * Math.PI/180;
+		double longDist = (c2[1] - c1[1]) * Math.PI/180;
+		double a = Math.sin(latDist/2.0) * Math.sin(latDist/2.0) + 
+							 Math.cos(c1[0] * Math.PI/180)*Math.cos(c2[0]*Math.PI/180)*
+							 Math.sin(longDist/2.0) * Math.sin(longDist/2.0);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		 return c * EARTH_RADIUS;
+
 
 	}
 
