@@ -137,10 +137,6 @@ for(int k = 2; k <=N; k++){
 		return (((x^(x + (x&(-x))))/(x&(-x)))>>2)|(x + (x&(-x)));
 	}
 
-	public static void Usage(){
-		System.out.println("Usage: java TspDP <path to file>");
-	}
-
 	public static void main(String[] args){
 		/*
 		double[][] d = {{0.0,0.0,0.0,0.0,0.0},{0.0, 0.0, 20.0, 42.0, 35.0},
@@ -151,13 +147,10 @@ for(int k = 2; k <=N; k++){
 		TspDP tsp = new TspDP(d);
 		tsp.calcOptPath();
     */
-		if(args.length == 1){
-    	double[][] d = readFile(args[0]);
-			if(d != null){
-				TspDP tsp = new TspDP(d);
-				tsp.printOptPath();
-			}
-		}else
-			TspDP.Usage();
+    double[][] d = readFile(args[0]);
+		if(d != null){
+			TspDP tsp = new TspDP(d);
+			tsp.printOptPath();
+		}
 	}
 }
