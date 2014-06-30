@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.math.BigDecimal;
 public class TspDP{
-  public static final int EARTH_RADIUS = 6371; // source Wikipedia
+  public static final int EARTH_RADIUS = 6371; // source https://www.princeton.edu/~achaney/tmve/wiki100k/docs/Earth_radius.html
   private final double [][] dist; //Since vertices are GPS coordinates, haversine distance is used
   private final int N;
   private double C[][];
@@ -38,9 +38,9 @@ public class TspDP{
       C[i][(1<<(i-2))] = dist[1][i];
     
     int sNew;
-    for(int nV = 2; nV < N ; nV++) //number of vertices in perm (apart from 1)
-      for(int s = (1<<(nV))-1; s < 1<<(N-1); s = nextNumSameBits(s)) //permutation for vertices selected
-        for(int k = 2; k <= N; k++) //ending vertex
+    for(int nV = 2; nV < N ; nV++){ //number of vertices in perm (apart from 1)
+      for(int s = (1<<(nV))-1; s < 1<<(N-1); s = nextNumSameBits(s)){ //permutation for vertices selected
+        for(int k = 2; k <= N; k++){ //ending vertex
           if((s&(1<<(k-2))) != 0){ // proceed with calculation only if the required vertex is part of the perm
             C[k][s] = Double.MAX_VALUE;
             //we need to remove k from the perm and search previously calculated paths
@@ -78,8 +78,9 @@ public class TspDP{
  
  
   public static double[][] readFile(String path){
-    try{
-      Scanner scan  = new Scanner(new File(path));
+    Scanner scan;
+		try{
+      scan  = new Scanner(new File(path));
     }catch (FileNotFoundException e){
       System.out.println("File Not Found. Kindly check file path provided");
       return null;
@@ -91,7 +92,7 @@ public class TspDP{
     String line;
     while(scan.hasNextLine()){
       line = scan.nextLine();
-      if(line.trim().equals(""));
+      if(line.trim().equals(""))
         continue;
       Matcher mX = xCoord.matcher(line);
       Matcher mY = yCoord.matcher(line);
@@ -142,8 +143,11 @@ public class TspDP{
     if(args.length == 1){
       double[][] d = readFile(args[0]);
       if(d != null){
+				long t = System.currentTimeMillis();
         TspDP tsp = new TspDP(d);
         tsp.printOptPath();
+				System.out.println("Time taken: " + (System.currentTimeMillis() - t) + " msec");
+
       }
     }else
       TspDP.Usage();
