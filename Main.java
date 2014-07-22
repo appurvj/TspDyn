@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.math.BigDecimal;
 
 /**
- * 							TspDP.java
+ * 							Main.java
  * This class provides the functionality of, given vertex and distances between 
  * them, computing the optimal tour starting from the first vertex and ending at
  * some other vertex. One must note that this is a slightly modified version of 
@@ -25,8 +25,7 @@ import java.math.BigDecimal;
  * @sources http://www.lsi.upc.edu/~mjserna/docencia/algofib/P07/dynprog.pdf
  */
 
-
-public class TspDP{
+public class Main{
   public static final int EARTH_RADIUS = 6371; // source https://www.princeton.edu/~achaney/tmve/wiki100k/docs/Earth_radius.html
   public static final int MAX_VERTICES = 30;// keeping it to 30 to be safe since using integer bitsets
   private final double [][] dist; //Since vertices are GPS coordinates, haversine distance is used
@@ -53,7 +52,7 @@ public class TspDP{
    * @param distMat : It is imp to note that for the sake of this problem,
    * the distMat is assumed to have and extra row and column for ease of dereferencing
    */
-  public TspDP(double[][] distMat){ //size of distMat is (N+1, N+1)
+  public Main(double[][] distMat){ //size of distMat is (N+1, N+1)
     this.dist = distMat;
     this.N = distMat.length - 1;
     this.C = new double[N][1<<(N-1)];
@@ -216,19 +215,20 @@ public class TspDP{
   }
 
   private static void Usage(){
-    System.out.println("Usage: java TspDP <path to file>");
+    System.out.println("Usage: java Main <path to file>");
   }
 
   public static void main(String[] args){
     if(args.length == 1){
       double[][] d = readFile(args[0]);
       if(d != null){
-	//long t = System.currentTimeMillis();
-        TspDP tsp = new TspDP(d);
+      	//long t = System.currentTimeMillis();
+        Main tsp = new Main(d);
         tsp.printOptPath();
-	//System.out.println("Time taken: " + (System.currentTimeMillis() - t) + " msec");
+	      //System.out.println("Time taken: " + (System.currentTimeMillis() - t) + " msec");
       }
     }else
-      TspDP.Usage();
+      Main.Usage();
   }
 }
+

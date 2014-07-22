@@ -18,5 +18,3 @@
 18 | RocketLawyer.com, 2nd Street, SF (37.788614, -122.400222)
 19 | The Square, Powell Street, SF (37.788985, -122.409079)
 20 | Facebook Inc., Willow Road, Menlo Park (37.484623, -122.148576)
-21 | Intuit, Marine Way, Mountain View (37.430164, -122.098224)
-22 | Google Inc, Amphitheatre Parkway, Mountain View (37.422, -122.084058)
